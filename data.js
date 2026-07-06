@@ -92,8 +92,7 @@ const TEAMS = [
 const INITIAL_STATE = {
   "eliminated": [
     "Brasilien",
-    "Mexiko",
-    "Frankreich"
+    "Mexiko"
   ],
   "finalTop4": [
     "",
