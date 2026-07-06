@@ -1,9 +1,69 @@
-let state=JSON.parse(localStorage.getItem("zellnerTippspielState"))||INITIAL_STATE;
-function pointsForParticipant(p){const f=state.finalTop4||["","","",""];const e=new Set(state.eliminated||[]);let current=0,max=0,outCount=0;p.tips.forEach((team,i)=>{const out=e.has(team);const exact=f[i]&&f[i]===team;const inTop=f.includes(team);if(out)outCount++;if(exact)current+=2;if(inTop)current+=1;if(exact){max+=2}else if(!f[i]&&!out){max+=2}if(inTop){max+=1}else if(!out&&f.some(x=>!x)){max+=1}});return{current,max,outCount}}
-function statusText(c){if(c.max===0)return"Keine Chance mehr";if(c.outCount>0)return`${c.outCount} Tipp(s) raus`;return"Alle Tipps im Rennen"}
-function render(){document.getElementById("participantCount").textContent=PARTICIPANTS.length;document.getElementById("eliminatedCount").textContent=(state.eliminated||[]).length;const ranking=PARTICIPANTS.map(p=>({...p,...pointsForParticipant(p)})).sort((a,b)=>b.current-a.current||b.max-a.max||a.name.localeCompare(b.name));const rb=document.querySelector("#rankingTable tbody");rb.innerHTML="";ranking.forEach((p,i)=>{const tr=document.createElement("tr");if(i===0)tr.className="rank-1";if(i===1)tr.className="rank-2";if(i===2)tr.className="rank-3";tr.innerHTML=`<td>${i+1}</td><td>${p.name}</td><td>${p.current}</td><td>${p.max}</td><td><span class="badge ${p.outCount?"out":"ok"}">${statusText(p)}</span></td>`;rb.appendChild(tr)});const tb=document.querySelector("#tipsTable tbody");tb.innerHTML="";PARTICIPANTS.forEach(p=>{const tr=document.createElement("tr");tr.innerHTML=`<td><strong>${p.name}</strong></td>${p.tips.map(t=>`<td>${t}${state.eliminated.includes(t)?" ❌":""}</td>`).join("")}`;tb.appendChild(tr)});renderAdmin()}
-function renderAdmin(){const div=document.getElementById("teamStatus");div.innerHTML="";TEAMS.forEach(team=>{const out=state.eliminated.includes(team);const d=document.createElement("div");d.className="team";d.innerHTML=`<span>${team}</span><button class="${out?"out":""}" onclick="toggleTeam('${team.replace(/'/g,"\\'")}')">${out?"Ausgeschieden":"Im Turnier"}</button>`;div.appendChild(d)});for(let i=1;i<=4;i++){const s=document.getElementById("final"+i);const cur=state.finalTop4[i-1]||"";s.innerHTML=`<option value="">Noch offen</option>`+TEAMS.map(t=>`<option value="${t}">${t}</option>`).join("");s.value=cur;s.onchange=()=>{state.finalTop4[i-1]=s.value;saveState(false);render()}}}
-function toggleTeam(team){const i=state.eliminated.indexOf(team);if(i>=0){state.eliminated.splice(i,1)}else{state.eliminated.push(team)}saveState(false);render()}
-function saveState(showAlert=true){localStorage.setItem("zellnerTippspielState",JSON.stringify(state));if(showAlert)alert("Gespeichert.")}
-function resetState(){if(!confirm("Wirklich zurücksetzen?"))return;state=JSON.parse(JSON.stringify(INITIAL_STATE));saveState(false);render()}
+const state = INITIAL_STATE;
+
+function pointsForParticipant(p){
+  const f=state.finalTop4||["","","",""];
+  const e=new Set(state.eliminated||[]);
+  let current=0,max=0,outCount=0;
+  p.tips.forEach((team,i)=>{
+    const out=e.has(team);
+    const exact=f[i]&&f[i]===team;
+    const inTop=f.includes(team);
+    if(out) outCount++;
+    if(exact) current+=2;
+    if(inTop) current+=1;
+    if(exact){max+=2}else if(!f[i]&&!out){max+=2}
+    if(inTop){max+=1}else if(!out&&f.some(x=>!x)){max+=1}
+  });
+  return{current,max,outCount}
+}
+
+function statusText(c){
+  if(c.max===0)return"Keine Chance mehr";
+  if(c.outCount>0)return`${c.outCount} Tipp(s) raus`;
+  return"Alle Tipps im Rennen";
+}
+
+function competitionRanks(rows){
+  let prevCurrent=null, prevMax=null, prevRank=0;
+  return rows.map((row,index)=>{
+    if(row.current===prevCurrent && row.max===prevMax){
+      row.rank=prevRank;
+    }else{
+      row.rank=index+1;
+      prevRank=row.rank;
+      prevCurrent=row.current;
+      prevMax=row.max;
+    }
+    return row;
+  });
+}
+
+function render(){
+  document.getElementById("participantCount").textContent=PARTICIPANTS.length;
+  document.getElementById("eliminatedCount").textContent=(state.eliminated||[]).length;
+
+  let ranking=PARTICIPANTS
+    .map(p=>({...p,...pointsForParticipant(p)}))
+    .sort((a,b)=>b.current-a.current||b.max-a.max||a.name.localeCompare(b.name));
+  ranking=competitionRanks(ranking);
+
+  const rb=document.querySelector("#rankingTable tbody");
+  rb.innerHTML="";
+  ranking.forEach(p=>{
+    const tr=document.createElement("tr");
+    if(p.rank===1)tr.className="rank-1";
+    if(p.rank===2)tr.className="rank-2";
+    if(p.rank===3)tr.className="rank-3";
+    tr.innerHTML=`<td>${p.rank}</td><td>${p.name}</td><td>${p.current}</td><td>${p.max}</td><td><span class="badge ${p.outCount?"out":"ok"}">${statusText(p)}</span></td>`;
+    rb.appendChild(tr);
+  });
+
+  const tb=document.querySelector("#tipsTable tbody");
+  tb.innerHTML="";
+  PARTICIPANTS.forEach(p=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td><strong>${p.name}</strong></td>${p.tips.map(t=>`<td>${t}${state.eliminated.includes(t)?" ❌":""}</td>`).join("")}`;
+    tb.appendChild(tr);
+  });
+}
 render();

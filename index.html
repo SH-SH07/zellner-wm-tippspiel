@@ -19,32 +19,26 @@
     <div class="card"><div class="label">Ausgeschiedene Teams</div><div class="value" id="eliminatedCount">0</div></div>
     <div class="card"><div class="label">Max. Punkte</div><div class="value">12</div></div>
   </section>
+
   <section class="panel">
     <h2>🏆 Rangliste</h2>
-    <p class="hint">Sortierung: aktuelle Punkte, danach maximal noch mögliche Punkte.</p>
-    <div class="table-wrap"><table id="rankingTable"><thead><tr><th>Platz</th><th>Teilnehmer</th><th>Aktuelle Punkte</th><th>Max. möglich</th><th>Status</th></tr></thead><tbody></tbody></table></div>
+    <p class="hint">Bei gleicher Punktzahl erhalten Teilnehmer denselben Platz.</p>
+    <div class="table-wrap">
+      <table id="rankingTable">
+        <thead><tr><th>Platz</th><th>Teilnehmer</th><th>Aktuelle Punkte</th><th>Max. möglich</th><th>Status</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </section>
+
   <section class="panel">
     <h2>📋 Tipps aller Teilnehmer</h2>
-    <div class="table-wrap"><table id="tipsTable"><thead><tr><th>Teilnehmer</th><th>1. Platz</th><th>2. Platz</th><th>3. Platz</th><th>4. Platz</th></tr></thead><tbody></tbody></table></div>
-  </section>
-  <section class="panel admin">
-    <h2>⚙️ Admin-Bereich</h2>
-    <p class="hint">Teams auf „Ausgeschieden“ setzen oder später das Endergebnis eintragen.</p>
-    <h3>Team-Status</h3>
-    <div id="teamStatus" class="team-grid"></div>
-    <h3>Endergebnis Top 4</h3>
-    <div class="final-grid">
-      <label>1. Platz <select id="final1"></select></label>
-      <label>2. Platz <select id="final2"></select></label>
-      <label>3. Platz <select id="final3"></select></label>
-      <label>4. Platz <select id="final4"></select></label>
+    <div class="table-wrap">
+      <table id="tipsTable">
+        <thead><tr><th>Teilnehmer</th><th>1. Platz</th><th>2. Platz</th><th>3. Platz</th><th>4. Platz</th></tr></thead>
+        <tbody></tbody>
+      </table>
     </div>
-    <div class="actions">
-      <button onclick="saveState()">Änderungen speichern</button>
-      <button onclick="resetState()" class="secondary">Zurücksetzen</button>
-    </div>
-    <p class="small">Hinweis: Änderungen werden im aktuellen Browser gespeichert.</p>
   </section>
 </main>
 <script src="data.js"></script>
