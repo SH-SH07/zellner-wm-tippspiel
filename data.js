@@ -93,7 +93,10 @@ const INITIAL_STATE = {
   "eliminated": [
     "Brasilien",
     "Mexiko",
-    "Portugal"
+    "Portugal",
+    "Marokko",
+    "Schweiz"
+    
   ],
   "finalTop4": [
     "",
